@@ -11,7 +11,7 @@ lazy val root = project
   .enablePlugins(ScalafmtPlugin)
   .in(file("."))
   .settings(
-    name := "cats-sandbox",
+    name := "aws-storage-scala",
     version := "0.1.0-SNAPSHOT",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.16" % Test,
     libraryDependencies += "software.amazon.awssdk" % "dynamodb" % "2.20.68"
