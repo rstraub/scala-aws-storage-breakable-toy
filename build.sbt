@@ -17,5 +17,7 @@ lazy val root = project
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.16" % Test,
     libraryDependencies += "software.amazon.awssdk" % "dynamodb" % awsVersion,
     libraryDependencies += "software.amazon.awssdk" % "s3" % awsVersion,
-    libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "2.0.9" % Runtime
+    libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "2.0.9" % Runtime,
+    libraryDependencies += "io.circe" %% "circe-parser" % "0.14.5",
+    libraryDependencies += "io.circe" %% "circe-generic" % "0.14.5"
   )

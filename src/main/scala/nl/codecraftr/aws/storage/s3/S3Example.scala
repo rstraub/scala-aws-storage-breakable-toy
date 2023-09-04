@@ -1,5 +1,6 @@
 package nl.codecraftr.aws.storage.s3
 
+import nl.codecraftr.aws.storage.model.Cat
 import software.amazon.awssdk.auth.credentials.{
   AwsBasicCredentials,
   StaticCredentialsProvider
@@ -10,13 +11,20 @@ import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.{
   Bucket,
   DeleteObjectRequest,
+  GetObjectRequest,
   PutObjectRequest
 }
+import io.circe.generic.auto._
+import io.circe.jawn.decode
+import io.circe.syntax._
+import io.circe.syntax._
+import nl.codecraftr.aws.storage.model.Cat.garfield
 
 import java.util
 
 object S3Example {
   private val bucketKey = "cats-1.json"
+  private val bucket = "aws-scala-bucket"
 
   def main(args: Array[String]): Unit = {
     val accessKey = args(0)
@@ -37,45 +45,52 @@ object S3Example {
 
     deleteCat(s3client)
     saveCat(s3client)
+    retrieveCat(s3client)
 
     s3client.close()
   }
 
-  private def deleteCat(client: S3Client) = {
-    client.deleteObject(
-      DeleteObjectRequest.builder
-        .bucket("aws-scala-bucket")
-        .key(bucketKey)
-        .build()
-    )
-  }
-
-  private def saveCat(s3client: S3Client) = {
-    val request =
-      PutObjectRequest.builder
-        .bucket("aws-scala-bucket")
-        .key(bucketKey)
-        .contentType("application/json")
-        .build
-
-    val json =
-      """
-          |{
-          |    "name": "Garfield",
-          |    "age": 38,
-          |    "colour": "ginger and black"
-          |}
-          |""".stripMargin
-
-    s3client.putObject(request, RequestBody.fromString(json))
-  }
-
-  private def listS3Buckets(s3client: S3Client): Unit = {
-    val listBucketsResponse = s3client.listBuckets
+  private def listS3Buckets(s3Client: S3Client): Unit = {
+    val listBucketsResponse = s3Client.listBuckets
 
     // Display the bucket names
     val buckets: util.List[Bucket] = listBucketsResponse.buckets
     println("Buckets:")
     buckets.forEach(bucket => println(bucket.name()))
+  }
+
+  private def deleteCat(s3Client: S3Client) = {
+    s3Client.deleteObject(
+      DeleteObjectRequest.builder
+        .bucket(bucket)
+        .key(bucketKey)
+        .build()
+    )
+  }
+
+  private def saveCat(s3Client: S3Client) = {
+    val request =
+      PutObjectRequest.builder
+        .bucket(bucket)
+        .key(bucketKey)
+        .contentType("application/json")
+        .build
+
+    val json =
+      garfield.asJson.toString()
+
+    s3Client.putObject(request, RequestBody.fromString(json))
+  }
+
+  private def retrieveCat(s3Client: S3Client): Unit = {
+    val request =
+      GetObjectRequest.builder().bucket(bucket).key(bucketKey).build()
+
+    val response = s3Client.getObjectAsBytes(request).asByteArray()
+
+    decode[Cat](new String(response)) match {
+      case Left(e)    => println(s"oops, something went wrong: $e")
+      case Right(cat) => println(s"response: $cat")
+    }
   }
 }
