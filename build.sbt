@@ -16,5 +16,6 @@ lazy val root = project
     version := "0.1.0-SNAPSHOT",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.16" % Test,
     libraryDependencies += "software.amazon.awssdk" % "dynamodb" % awsVersion,
-    libraryDependencies += "software.amazon.awssdk" % "s3" % awsVersion
+    libraryDependencies += "software.amazon.awssdk" % "s3" % awsVersion,
+    libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "2.0.9" % Runtime
   )
