@@ -1,32 +1,30 @@
 package nl.codecraftr.aws.storage.s3
 
+import com.typesafe.scalalogging.StrictLogging
 import io.circe.generic.auto._
 import io.circe.jawn.decode
 import io.circe.syntax._
 import nl.codecraftr.aws.storage.model.Cat
 import nl.codecraftr.aws.storage.model.Cat.garfield
-import software.amazon.awssdk.auth.credentials.{
-  AwsBasicCredentials,
-  StaticCredentialsProvider
-}
+import software.amazon.awssdk.auth.credentials.{AwsBasicCredentials, StaticCredentialsProvider}
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model._
-import scala.jdk.CollectionConverters._
 
+import scala.jdk.CollectionConverters._
 import java.net.URI
 import java.util
 
-object S3Example {
+object S3Example extends StrictLogging {
   private val bucketKey = "cats-1.json"
   private val bucket = "cat-bucket"
 
   def main(args: Array[String]): Unit = {
     val accessKey = args(0)
     val secretKey = args(1)
-    println(s"access key: $accessKey")
-    println(s"secret key: $secretKey")
+    logger.info(s"access key: $accessKey")
+    logger.info(s"secret key: $secretKey")
 
     val credentials =
       AwsBasicCredentials.create(accessKey, secretKey)
@@ -64,7 +62,7 @@ object S3Example {
     val bucketExists =
       s3client.listBuckets().buckets().asScala.exists(_.name() == bucket)
 
-    if (bucketExists) println(s"bucket $bucket already exists")
+    if (bucketExists) logger.info(s"bucket $bucket already exists")
     else s3client.createBucket(createBucketRequest)
   }
 
@@ -73,8 +71,8 @@ object S3Example {
 
     // Display the bucket names
     val buckets: util.List[Bucket] = listBucketsResponse.buckets
-    println("Buckets:")
-    buckets.forEach(bucket => println(bucket.name()))
+    logger.info("Buckets:")
+    buckets.forEach(bucket => logger.info(bucket.name()))
   }
 
   private def deleteCat(s3Client: S3Client) = {
@@ -107,8 +105,8 @@ object S3Example {
     val response = s3Client.getObjectAsBytes(request).asByteArray()
 
     decode[Cat](new String(response)) match {
-      case Left(e)    => println(s"oops, something went wrong: $e")
-      case Right(cat) => println(s"response: $cat")
+      case Left(e)    => logger.info(s"oops, something went wrong: $e")
+      case Right(cat) => logger.info(s"response: $cat")
     }
   }
 }

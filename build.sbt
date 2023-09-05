@@ -8,6 +8,7 @@ ThisBuild / scalacOptions ++= Seq("-Wunused:imports")
 ThisBuild / scalafixScalaBinaryVersion := "2.13"
 
 val awsVersion = "2.20.68"
+
 lazy val root = project
   .enablePlugins(ScalafmtPlugin)
   .in(file("."))
@@ -17,7 +18,8 @@ lazy val root = project
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.16" % Test,
     libraryDependencies += "software.amazon.awssdk" % "dynamodb" % awsVersion,
     libraryDependencies += "software.amazon.awssdk" % "s3" % awsVersion,
-    libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "2.0.9" % Runtime,
+    libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
+    libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.7",
     libraryDependencies += "io.circe" %% "circe-parser" % "0.14.5",
     libraryDependencies += "io.circe" %% "circe-generic" % "0.14.5"
   )
