@@ -18,7 +18,7 @@ import java.util
 
 object S3Example extends StrictLogging {
   private val bucketKey = "cats-1.json"
-  private val bucket = "cat-bucket"
+  private val bucket = "cat-bucket-scala"
 
   def main(args: Array[String]): Unit = {
     val accessKey = args(0)
